@@ -1,0 +1,64 @@
+---
+title: "Project 1"
+author: "KaizeYi"
+date: "9/28/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## loading the data
+```{r}
+source('CleanData.R')
+```
+
+<h2>Describe the data set</h2>
+```{r}
+view(history)
+```
+In this data set, it record tour de France records from 1903 to 2017, records like the how many stages was in the the game year, how long take the winner to win the game at the year, pace(formula for pace: min/km) of the winner, and winner's name, age, and nationality. There is 104 rows in the data set.
+
+<h2>some intresting data</h2>
+```{r}
+history_bywinner <- group_by(history, Winner)
+summarize(history_bywinner,
+          HowManyTimes = n())%>%
+  arrange(desc(HowManyTimes))
+```
+lance Armstrong is the most winning cyclist in this data set. But he has lost all 7 Tour de France title and got a lifetime ban by the USADA, because of doping. I'm not sure if those data should take out or not.
+
+```{r}
+filter(
+  history, Distance < 3000
+  )
+```
+
+In the earlier race, from 1903 - 1905, the distance traveled during the games makes 3 outliers in the data set, which was under 3000 km. I did some reaserch about it, I find out that, for the first 3 years, because of the fund shortage they did not finish the tour.
+<h2>Peace vs distance</h2> 
+```{r}
+history_complete_tour%>%
+  ggplot(mapping = aes(x = Pace, y = Distance))+
+  geom_point()+
+  geom_smooth(method = "lm", se=FALSE)+
+  labs(title = "Pace VS. Distance", x = "Pace(min/km)", y = "Distance (km)")
+```
+<h2>Distance changes over time</h2>
+```{r}
+ggplot(history, aes(x = Year, y = Distance)) +
+  geom_line() +
+  labs(title="Early Jump, Then a Long Decline", subtitle = "Tour de France Distances", 
+       x = "Year", y = "Distance (km)")
+```
+<h2>Stages Changes Over Time</h2>
+```{r}
+ggplot(history, aes(x = Year, y = Stages)) +
+  geom_line() +
+  labs(title="Stages Change Over Time", subtitle = "Tour de France stages", 
+       x = "Year", y = "stages")
+```
+<h2>Summary</h2>
+so in first 3 years of the game, it did not finish the race. 1906, they finally finished the tour for the firs time. After that they make the race equally likely to be the length of French boarder. In 1947, after WWII, the tour expand the circle out side of France to  Belgium.start from 1951, the tour is not a circle any more. For example, the 2017 Tour de France, it start in Düsseldorf, Germany, end in Paris, France.Because the tour changed over time, numbers of stages in the game changes, and the road condition changed over time, the later games added more mountain stages to the game. The cyclist will spend more time to climbing up the mountains.
+
